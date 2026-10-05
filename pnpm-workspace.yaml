@@ -1,0 +1,9 @@
+packages:
+  - "wilsoon"
+
+allowBuilds:
+  esbuild: false
+  # wlint runs without it: eslint.config.mjs and dprint.json are committed, so its postinstall would only re-create them.
+  "@wilsoon/eslint-config": false
+  # The binary comes from the matching @dprint/<platform> package; the postinstall only copies it into place.
+  dprint: false

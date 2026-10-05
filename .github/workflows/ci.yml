@@ -1,0 +1,87 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: providers
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          path: providers
+
+      - name: Check whether auth-core is linked from the SDK
+        id: sdk
+        run: |
+          if grep -q 'link:../WilsoonID-NodeSDK' pnpm-workspace.yaml; then
+            echo "linked=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        if: steps.sdk.outputs.linked == 'true'
+        with:
+          repository: Wilsoon7721/node-oidc-kit
+          ref: ${{ vars.SDK_REF || 'main' }}
+          path: WilsoonID-NodeSDK
+
+      - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
+        with:
+          package_json_file: providers/package.json
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: providers/pnpm-lock.yaml
+
+      - name: Build the linked auth-core
+        if: steps.sdk.outputs.linked == 'true'
+        working-directory: WilsoonID-NodeSDK
+        run: |
+          pnpm install --frozen-lockfile --ignore-scripts
+          pnpm --filter @wilsoon/auth-core build
+
+      - run: pnpm install --frozen-lockfile --ignore-scripts
+
+      # Dependabot bumps the dev dependency, not the peer range, so a new auth-core major has to be accepted here on purpose.
+      - name: Check auth-core against the peer range
+        run: |
+          node -e '
+            const pkg = require("./wilsoon/package.json");
+            const range = pkg.peerDependencies["@wilsoon/auth-core"];
+            const installed = require("./wilsoon/node_modules/@wilsoon/auth-core/package.json").version;
+            if (installed.split(".")[0] !== range.replace(/^\^/, "").split(".")[0]) {
+              console.log(`::error::@wilsoon/auth-core ${installed} is outside the peer range ${range}. Widen peerDependencies once the profile supports it.`);
+              process.exit(1);
+            }
+          '
+
+      - run: pnpm build
+
+      - run: pnpm typecheck
+
+      - name: Lint
+        run: |
+          pnpm lint
+          if ! git diff --exit-code; then
+            echo "::error::pnpm lint changed the files above. Run it locally and commit the result."
+            exit 1
+          fi
+
+      - run: pnpm test

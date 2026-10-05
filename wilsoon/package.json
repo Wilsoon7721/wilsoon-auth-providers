@@ -1,0 +1,59 @@
+{
+  "name": "@wilsoon/auth-provider-wilsoon",
+  "version": "3.0.0",
+  "description": "WilsoonID provider profile for @wilsoon/auth-core: claim mapping, permission registration, live access and method escalation",
+  "keywords": [
+    "oidc",
+    "openid-connect",
+    "wilsoon",
+    "provider-profile",
+    "permissions",
+    "step-up"
+  ],
+  "author": "Wilson Oon",
+  "homepage": "https://github.com/Wilsoon7721/wilsoon-auth-providers/tree/main/wilsoon#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Wilsoon7721/wilsoon-auth-providers.git",
+    "directory": "wilsoon"
+  },
+  "bugs": {
+    "url": "https://github.com/Wilsoon7721/wilsoon-auth-providers/issues"
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "require": "./dist/index.js",
+      "import": "./dist/index.mjs"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "dev": "tsup --watch",
+    "build": "tsup",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit -p tsconfig.test.json"
+  },
+  "license": "MIT",
+  "peerDependencies": {
+    "@wilsoon/auth-core": "^3.0.0"
+  },
+  "devDependencies": {
+    "@wilsoon/auth-core": "^3.0.0",
+    "jose": "^5.10.0",
+    "tsup": "^8.0.0",
+    "typescript": "^5.0.0",
+    "vitest": "^1.0.0"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

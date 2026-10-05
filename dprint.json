@@ -1,0 +1,25 @@
+{
+  "$schema": "https://dprint.dev/schemas/v0.json",
+  "lineWidth": 250,
+  "indentWidth": 2,
+  "useTabs": false,
+  "typescript": {
+    "quoteStyle": "preferSingle",
+    "semiColons": "always",
+    "trailingCommas": "never",
+    "arrowFunction.useParentheses": "force",
+    "jsx.bracketPosition": "sameLine",
+    "memberExpression.linePerExpression": false,
+    "useBraces": "maintain",
+    "singleBodyPosition": "maintain"
+  },
+  "plugins": [
+    "https://plugins.dprint.dev/typescript-0.96.1.wasm"
+  ],
+  "excludes": [
+    "**/dist",
+    "**/node_modules",
+    "**/.turbo",
+    "pnpm-lock.yaml"
+  ]
+}

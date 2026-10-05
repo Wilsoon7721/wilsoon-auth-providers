@@ -1,0 +1,27 @@
+version: 2
+
+updates:
+  # Pinned SHAs don't update themselves, so without this the pins in ci.yml and
+  # publish.yml quietly rot and stop receiving security fixes.
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: ci
+    groups:
+      actions:
+        patterns:
+          - "*"
+
+  # Keeps the profile in step with the SDK it extends. Each auth-core release gets its own PR,
+  # which CI tests against; a new major also fails the peer range check until the range is widened.
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: daily
+    allow:
+      - dependency-name: "@wilsoon/*"
+    versioning-strategy: increase
+    commit-message:
+      prefix: deps
