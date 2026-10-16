@@ -41,10 +41,10 @@
   },
   "license": "MIT",
   "peerDependencies": {
-    "@wilsoon/auth-core": "^3.0.0"
+    "@wilsoon/auth-core": "^3.0.2"
   },
   "devDependencies": {
-    "@wilsoon/auth-core": "^3.0.0",
+    "@wilsoon/auth-core": "^3.0.2",
     "jose": "^5.10.0",
     "tsup": "^8.0.0",
     "typescript": "^5.0.0",
